@@ -7,7 +7,7 @@ const pool = require('../modules/pool.js');
 
 
 // GET
-koala.Router.get('/', (req, res) => {
+koalaRouter.get('/', (req, res) => {
     let sqlQuery = `
         SELECT * FROM "koalas"
         ORDER BY "name" ASC;
@@ -23,7 +23,30 @@ koala.Router.get('/', (req, res) => {
 
 
 // POST
+koalaRouter.post('/', (req,res) => {
+    let newKoala = req.body;
+    console.log(`Adding new koala`, newKoala);
+    
+    let sqlQuery = `
+    INSERT INTO "koalas"
+    ("name", "gender", "age", "ready_to_transfer","notes")
+        VALUES ($1, $2, $3, $4, $5);
+    `;
 
+    let sqlValues = [newKoala.name, newKoala.gender,
+                    newKoala.age, newKoala.ready_to_transfer,
+                    newKoala.notes];
+        pool.query(sqlQuery, sqlValues)
+         .then((dbRes) => {
+            res.sendStatus(200);
+         })
+         .catch((dbErr) => {
+            console.log('Error adding new koala', dbErr)
+            res.sendStatus(500);
+         })
+
+
+})
 
 // PUT
 
