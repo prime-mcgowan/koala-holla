@@ -4,8 +4,11 @@ $( document ).ready( function(){
   console.log( 'JQ' );
   // Establish Click Listeners
   setupClickListeners()
+  getKoalas()
+  $('body').on('click', '.readyToTranserButton', readyToTransferButton);
+  $('body').on('click', '.deleteButton', deleteButton);
   // load existing koalas on page load
-  getKoalas();
+  
 
 }); // end doc ready
 
@@ -38,19 +41,36 @@ function getKoalas(){
     //render koalas
     $('#viewKoalas').empty();
 
+  
     for (let koala of response) {
+      if (koala.ready_to_transfer === 'Y') {
       $('#viewKoalas').append(`
-        <tr>
+        <tr data-id=${koala.id}>
           <td>${koala.name}</td>
           <td>${koala.age}</td>
           <td>${koala.gender}</td>
           <td>${koala.ready_to_transfer}</td>
           <td>${koala.notes}</td>
-          <td><button>Ready for Transfer</button>
-          <td><button>Delete</button>
+          <td><button class="deleteButton">Delete</button></td>
         </tr>
-      `) // where does data-id=${koala.id?} belong???
+      `); 
+      }
+      else {
+        $('#viewKoalas').append(`
+        <tr data-id=${koala.id}>
+          <td>${koala.name}</td>
+          <td>${koala.age}</td>
+          <td>${koala.gender}</td>
+          <td>${koala.ready_to_transfer}</td>
+          <td>${koala.notes}</td>
+          <td><button class="readyToTranserButton">Ready for Transfer</button>
+          <td><button class ="deleteButton">Delete</button></td>
+        </tr>
+      `); 
+      }
     }
+  }).catch(function(error) {
+    console.log('error in GET', error);
   })
 } // end getKoalas
 
@@ -59,3 +79,38 @@ function saveKoala( newKoala ){
   // ajax call to server to get koalas
  
 }
+
+
+// update for specific koala
+// RFT button only appears for koalas who haven't been "marked"
+// for transfer yet
+function readyToTransferButton(){
+  let idToUpdate = $(this).parent().parent().data().id;
+  console.log(idToUpdate);
+
+  $.ajax({
+    method: 'PUT',
+    url: `/koalas/${idToUpdate}`,
+    data: {
+      ready_to_transfer: 'Y'
+    }
+  }).then((response) => {
+    getKoalas();
+  }).catch((error) => {
+      console.log('unable to update', error)
+  })
+} //end of readyToTransferButton function
+
+
+function deleteButton() {
+  let idToDelete = $(this).parent().parent().data().id;
+
+  $.ajax({
+    method: 'DELETE',
+    url: `/koalas/${idToDelete}`
+  }).then((response) => {
+    getKoalas();
+  }).catch((error) => {
+    console.log('deleteButton broken', error);
+  })
+}; //end of deleteButton function

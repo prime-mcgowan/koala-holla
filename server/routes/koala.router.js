@@ -1,4 +1,4 @@
-const { Router } = require('express');
+const { Router, application } = require('express');
 const express = require('express');
 const koalaRouter = express.Router();
 
@@ -50,7 +50,55 @@ koalaRouter.post('/', (req,res) => {
 
 // PUT
 
+koalaRouter.put('/:id', (req, res) => {
+    //in postman you have to include an id #
+    //PUT localhost:5000/koalas/5
+    //in your server you'd see {id:'5'}
+    console.log('req.params:', req.params);
+    //***have to have: app.use(bodyParser.json()); in server.js
+    //in postman YOU have to enter dummy data
+    //ex. {"name": "Scotty"}
+    console.log('req.body:', req.body);
+
+    let idToUpdate = req.params.id;
+    let newReadyToTransfer = req.body.ready_to_transfer;
+
+    let sqlQuery = `
+        UPDATE "koalas"
+            SET "ready_to_transfer"=$1
+            WHERE "id"=$2;
+    `
+    let sqlValues = [newReadyToTransfer, idToUpdate];
+
+    pool.query(sqlQuery, sqlValues)
+        .then((dbRes) => {
+            res.sendStatus(200);
+        })
+        .catch((dbErr) => {
+            console.log('something broke in PUT/koala/:id', dbErr);
+            res.sendStatus(500);
+        })
+}) //end PUT route
 
 // DELETE
+koalaRouter.delete('/:id', (req,res) => {
+    console.log(req.params);
+    let idToDelete = req.params.id;
+
+    let sqlQuery = `
+    DELETE FROM "koalas"
+        WHERE "id"=$1;
+    `
+    let sqlValues = [idToDelete];
+    pool.query(sqlQuery, sqlValues)
+     .then((dbRes) => {
+        res.sendStatus(200);
+     })
+     .catch((dbErr) => {
+        console.log('DELETE broke in /koalas/:id', dbErr);
+        res.sendStatus(500);
+     })
+})
+
 
 module.exports = koalaRouter;
