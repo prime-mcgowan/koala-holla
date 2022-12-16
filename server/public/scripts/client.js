@@ -23,6 +23,7 @@ function setupClickListeners() {
     let newAge = $('#ageIn').val();
     let newGender = $('#genderIn').val();
     let newReadyForTransfer = $('#readyForTransferIn').val();
+    console.log(newReadyForTransfer);
     let newNotes = $('#notesIn').val();
     
     let koalaToSend = {
@@ -37,9 +38,9 @@ function setupClickListeners() {
 
     newName = $('#nameIn').val('');
     newAge = $('#ageIn').val('');
-  //   let newGender = $('#genderIn').val();
-  //   let newReadyForTransfer = $('#readyForTransferIn').val();
-  //   let newNotes = $('#notesIn').val();
+    newGender = $('#genderIn').val('');
+    newReadyForTransfer = $('#readyForTransferIn').val('');
+    newNotes = $('#notesIn').val('');
    }); 
 }
 

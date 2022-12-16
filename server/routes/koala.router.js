@@ -34,7 +34,7 @@ koalaRouter.post('/', (req,res) => {
     `;
 
     let sqlValues = [newKoala.name, newKoala.gender,
-                    newKoala.age, newKoala.ready_to_transfer,
+                    newKoala.age, newKoala.readyForTransfer,
                     newKoala.notes];
         pool.query(sqlQuery, sqlValues)
          .then((dbRes) => {
